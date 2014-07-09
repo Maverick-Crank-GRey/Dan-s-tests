@@ -42,10 +42,33 @@ public class ParserTestOneWordDictionary {
     }
 
     @Test
-    public void testParse_oneComplexWordLine() throws Exception {
-        final Set<List<String>> lines = parser.parse("an");
+    public void testInnerParse_secondWordLine() throws Exception {
+        final Set<List<String>> lines = parser.parse(ImmutableList.of("a"), "a");
 
-        Assert.assertThat("The parser must read whole line.",
+        final List<String> line = ImmutableList.of("a", "a");
+        Assert.assertThat(lines, hasItem(line));
+    }
+
+    @Test
+    public void testInnerParse_threeWordLine() throws Exception {
+        Assert.assertThat(
+                parser.parse(ImmutableList.<String>of(), "aaa"),
+                hasItem(ImmutableList.of("a", "a", "a")));
+
+        Assert.assertThat(
+                parser.parse(ImmutableList.of("a"), "aa"),
+                hasItem(ImmutableList.of("a", "a", "a")));
+
+        Assert.assertThat(
+                parser.parse(ImmutableList.of("a", "a"), "a"),
+                hasItem(ImmutableList.of("a", "a", "a")));
+    }
+
+    @Test
+    public void testInnerParse_oneWordOutOfDictionaryLine() throws Exception {
+        final Set<List<String>> lines = parser.parse(ImmutableList.of("a"), "b");
+
+        Assert.assertThat("The parser must recognize all words in the line.",
                 lines, is(empty()));
     }
 }

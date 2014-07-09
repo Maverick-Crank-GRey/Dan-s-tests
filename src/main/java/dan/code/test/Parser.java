@@ -3,7 +3,6 @@ package dan.code.test;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -22,33 +21,45 @@ public class Parser {
     @Nonnull
     public Set<List<String>> parse(final @Nonnull String line) {
         Preconditions.checkNotNull(line, "The line must exist!");
+
         if (line.isEmpty()) {
             return ImmutableSet.of();
         }
 
-        Set<List<String>> result = Sets.newHashSet();
-        final ImmutableList.Builder<String> builder = ImmutableList.builder();
+        return parse(ImmutableList.<String>of(), line);
+    }
 
-        int startIndex = 0;
-        int currentIndex = 1;
+    @Nonnull
+    Set<List<String>> parse(@Nonnull List<String> alreadyFoundWords, @Nonnull String line) {
+        Preconditions.checkNotNull(alreadyFoundWords, "The 'alreadyFoundWords' must not be null!");
+        Preconditions.checkNotNull(line, "The line must exist!");
+        Preconditions.checkArgument(!line.isEmpty(), "The line must not be empty!");
+
+        final ImmutableSet.Builder<List<String>> resultBuilder = ImmutableSet.builder();
+
+        final int startIndex = 0;
         final int lastIndex = line.length();
-        int lastFoundIndex = startIndex;
 
-        while(currentIndex <= lastIndex) {
+        for(int currentIndex = 0; currentIndex <= lastIndex; currentIndex++) {
             String suspect = line.substring(startIndex, currentIndex);
             if (dictionary.contains(suspect)) {
-                lastFoundIndex = currentIndex;
-                builder.add(suspect);
-                startIndex = currentIndex;
+                final List<String> newVariant = ImmutableList.<String>builder()
+                        .addAll(alreadyFoundWords)
+                        .add(suspect)
+                        .build();
+
+                final String theRestOfTheLine = line.substring(currentIndex, lastIndex);
+
+                final boolean shallWeTryAnotherVariants = !theRestOfTheLine.isEmpty();
+                if (shallWeTryAnotherVariants) {
+                    final Set<List<String>> otherVariants = parse(newVariant, theRestOfTheLine);
+                    resultBuilder.addAll(otherVariants);
+                } else {
+                    resultBuilder.add(newVariant);
+                }
             }
-
-            currentIndex++;
         }
 
-        final boolean lastFoundWordIsEndedTheLine = lastFoundIndex == lastIndex;
-        if (lastFoundWordIsEndedTheLine) {
-            result.add(builder.build());
-        }
-        return result;
+        return resultBuilder.build();
     }
 }
