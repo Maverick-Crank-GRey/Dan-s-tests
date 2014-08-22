@@ -5,7 +5,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 import javax.annotation.Nonnull;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -13,6 +15,7 @@ import java.util.Set;
  */
 public class Parser {
     private final Set<String> dictionary;
+    private final Map<String, List<String>> cache = new HashMap<>(1000);
 
     public Parser(ImmutableSet<String> dictionary) {
         this.dictionary = dictionary;
@@ -50,8 +53,8 @@ public class Parser {
 
                 final String theRestOfTheLine = line.substring(currentIndex, lastIndex);
 
-                final boolean shallWeTryAnotherVariants = !theRestOfTheLine.isEmpty();
-                if (shallWeTryAnotherVariants) {
+                final boolean canWeTryAnotherVariants = !theRestOfTheLine.isEmpty();
+                if (canWeTryAnotherVariants) {
                     final Set<List<String>> otherVariants = parse(newVariant, theRestOfTheLine);
                     resultBuilder.addAll(otherVariants);
                 } else {
