@@ -1,4 +1,4 @@
-package dan.code.test;
+package dan.code.test.wordfinder;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;

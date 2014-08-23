@@ -1,6 +1,7 @@
-package dan.code.test;
+package dan.code.test.wordfinder;
 
 import com.google.common.collect.ImmutableSet;
+import dan.code.test.wordfinder.Parser;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
