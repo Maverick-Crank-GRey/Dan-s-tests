@@ -3,9 +3,7 @@ package dan.code.test.treecutter;
 /**
  * Created by maverick on 8/22/14.
  */
-public class RecursiveCutter implements Cutter {
-    public static final int DEAD_INDEX = -1;
-    private final int[] tree;
+public class RecursiveCutter extends DumbCutter implements Cutter {
 
     /**
      * Instantiate a class with a tree structure encoded as an array.
@@ -14,14 +12,14 @@ public class RecursiveCutter implements Cutter {
      * @param tree The tree encoded as an array.
      */
     public RecursiveCutter(int[] tree) {
-        this.tree = tree;
+        super(tree);
     }
 
     @Override
     public int[] cut(int[] condemnedIndexes) {
         int numberOfDeadElements = markDeadBranches(tree, condemnedIndexes);
         final int newTreeSize = tree.length - numberOfDeadElements;
-        return createNewTree(tree, newTreeSize);
+        return createNewTree(newTreeSize);
     }
 
     static int markDeadBranches(int[] tree, int[] condemnedIndexes) {
@@ -38,16 +36,5 @@ public class RecursiveCutter implements Cutter {
             }
         }
         return numberOfDeadElements;
-    }
-
-    static int[] createNewTree(final int[] originalTree, final int newTreeSize) {
-        final int[] newTree = new int[newTreeSize];
-        int newTreeIndex = 0;
-        for (final int value : originalTree) {
-            if (value != DEAD_INDEX) {
-                newTree[newTreeIndex++] = value;
-            }
-        }
-        return newTree;
     }
 }
